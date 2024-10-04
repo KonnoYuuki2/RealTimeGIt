@@ -1,4 +1,5 @@
 import { CLIENT_VERSION } from './constants.js';
+import { newGameAssets } from './index.js';
 
 const socket = io('http://localhost:3000', { // 이 주소로 연결하겠다.
   query: {
@@ -7,15 +8,34 @@ const socket = io('http://localhost:3000', { // 이 주소로 연결하겠다.
   },
 });
 
+// 이런 파일들에 대해서 클래스 파일을 만들어 관리하면 깔끔할 것이다.
 export let currentStage = {};
+let userId = null; // 유저아이디 초기화
+const accessLog = document.getElementById('access');
+// 일반적으로 이렇게 불러오게 되면 안에 제대로 값을 넣지 못하게 된다.
+//var newRecords = saveRecords;
 
-export let userId = null; // 유저아이디 초기화
 socket.on('response', (response) => { // response라는 이름의 이벤트가 발생했을 떄 해당 이벤트를 출력한다.
   if(response.currentStage) {
-    console.log(response.currentStage);
+    console.log(`현재 스테이지: `, response.currentStage);
      currentStage = response.currentStage;
   }
 
+  if(response.broadCast) {
+    //gameLog.after(response.broadCast);
+    console.log(response.broadCast);
+  }
+
+  if(response.records) {
+    //console.log(`response.records`, response.records);
+    newGameAssets.update(response.records);
+    //return 시 제대로 작동하지 않는다는 점
+  }
+
+  if(response.ranker) {
+    accessLog.innerHTML = `<H3 style="color:greenyellow">${response.ranker}</H3>`;
+    console.log(response.ranker);
+  }
   console.log(`client response:` + response);
 });
 

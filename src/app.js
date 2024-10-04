@@ -2,8 +2,7 @@ import express from "express";
 import { createServer } from "http";
 import initSocket from "./init/socket.js";
 import { getGameAssets, loadGameAsset } from "./init/assets.js";
-import { getStage } from "./models/stage.model.js";
-import { getUser } from "./models/user.model.js";
+import { redisCli } from "./init/redis.js";
 
 const app = express();
 const server = createServer(app); // 서버를 키고 웹소켓을 하는 등에 사용
@@ -22,6 +21,12 @@ app.get("/", (req, res) => {
 
 app.get("/getGameAssets", (req, res) => {
   res.send(getGameAssets()); // 클라이언트로 데이터를 보냄
+});
+
+app.get("/getRedisData", async (req, res) => {
+  res.send( await redisCli.get('key', (err,value) => {
+    return value
+  })); // 클라이언트로 데이터를 보냄
 });
 
 server.listen(PORT, async () => {

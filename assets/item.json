@@ -1,8 +1,12 @@
 {
-"ITEM_CONFIG": [
-    {  "id": 1 , "type": 1},
-    { "id": 2, "type": 2 },
-    { "id": 3 , "type": 3 },
-    { "id": 4 , "type": 4 }
-  ]
-}
+  "name" : "items",
+  "version": "1.0.0",
+  "ITEM_CONFIG": [  
+      { "width": 30, "height": 30, "id": 1, "type": "score", "image": "images/items/coin.png" , "score": 12},
+      { "width": 40, "height": 40, "id": 2, "type": "poisionFruit", "image": "images/items/poisionFruit.png" , "score": -24},
+      { "width": 45, "height": 45, "id": 3, "type": "score",  "image": "images/items/coin2.png", "score": 36 },
+      { "width": 40, "height": 40, "id": 4, "type": "poision", "image": "images/items/poision2.png", "score": -108 },
+      { "width": 50, "height": 50, "id": 5, "type": "score", "image": "images/items/coin3.png", "score": 300}
+    ]
+  }
+  

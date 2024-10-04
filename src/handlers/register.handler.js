@@ -1,7 +1,6 @@
 import { addUser } from "../models/user.model.js";
 import { v4 as uuidv4} from 'uuid';
 import { handleConnection, handleDisconnect, handlerEvent } from "./helper.js";
-import { getStage } from "../models/stage.model.js";
 
 // io => 서버에 접속하는 모든 유저를 위한 이벤트
 const registerHandler = (io) => {

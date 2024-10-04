@@ -5,21 +5,29 @@ import Score from './Score.js';
 import ItemController from './ItemController.js';
 import './socket.js';
 import { sendEvent } from './socket.js';
+import gameAssets from './gameAssets.js';
 
 //해당 URL로 요청한 데이터를 받아서 처리
 const gameDataRequest = await fetch('http://localhost:3000/getGameAssets'); 
 const gameData = await gameDataRequest.json(); 
-console.log(gameData);
+
+const redisDataRequest = await fetch('http://localhost:3000/getRedisData'); 
+const redisData = await redisDataRequest.json(); 
+
+const { stages, items, itemUnlocks, records, plants } = gameData;
+export const newGameAssets = new gameAssets(stages, items, itemUnlocks, redisData);
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
+
+export const gameLog = document.getElementById('gameLog');
 
 const GAME_SPEED_START = 1;
 const GAME_SPEED_INCREMENT = 0.00001;
 
 // 게임 크기
 const GAME_WIDTH = 800;
-const GAME_HEIGHT = 200;
+const GAME_HEIGHT = 250;
 
 // 플레이어
 // 800 * 200 사이즈의 캔버스에서는 이미지의 기본크기가 크기때문에 1.5로 나눈 값을 사용. (비율 유지)
@@ -29,27 +37,18 @@ const MAX_JUMP_HEIGHT = GAME_HEIGHT;
 const MIN_JUMP_HEIGHT = 150;
 
 // 땅
-const GROUND_WIDTH = 2400;
-const GROUND_HEIGHT = 24;
-const GROUND_SPEED = 0.5;
+const GROUND_WIDTH = 1200;
+const GROUND_HEIGHT = 250;
+const GROUND_SPEED = 0.6;
 
-// 선인장
-const CACTI_CONFIG = [
-  { width: 48 / 1.5, height: 100 / 1.5, image: 'images/cactus_1.png' },
-  { width: 98 / 1.5, height: 100 / 1.5, image: 'images/cactus_2.png' },
-  { width: 68 / 1.5, height: 70 / 1.5, image: 'images/cactus_3.png' },
-];
+// 식물들
+const PLANTS_CONFIG = plants.PLANTS_CONFIG;
 
 // 아이템
-const ITEM_CONFIG = [
-  { width: 50 / 1.5, height: 50 / 1.5, id: 1, image: 'images/items/pokeball_red.png' },
-  { width: 50 / 1.5, height: 50 / 1.5, id: 2, image: 'images/items/pokeball_yellow.png' },
-  { width: 50 / 1.5, height: 50 / 1.5, id: 3, image: 'images/items/pokeball_purple.png' },
-  { width: 50 / 1.5, height: 50 / 1.5, id: 4, image: 'images/items/pokeball_cyan.png' },
-];
+const ITEM_CONFIG = items.ITEM_CONFIG;
 
 // 게임 요소들
-let player = null;
+export let player = null;
 let ground = null;
 let cactiController = null;
 let itemController = null;
@@ -61,6 +60,10 @@ let gameSpeed = GAME_SPEED_START;
 let gameover = false;
 let hasAddedEventListenersForRestart = false;
 let waitingToStart = true;
+
+const BGM = new Audio('./audios/BGM2.mp3');
+BGM.loop = true;
+const Dead = new Audio('./audios/girl_cry.mp3');
 
 function createSprites() {
   // 비율에 맞는 크기
@@ -85,7 +88,7 @@ function createSprites() {
 
   ground = new Ground(ctx, groundWidthInGame, groundHeightInGame, GROUND_SPEED, scaleRatio);
 
-  const cactiImages = CACTI_CONFIG.map((cactus) => {
+  const cactiImages = PLANTS_CONFIG.map((cactus) => {
     const image = new Image();
     image.src = cactus.image;
     return {
@@ -99,6 +102,7 @@ function createSprites() {
 
   const itemImages = ITEM_CONFIG.map((item) => {
     // 아이템 제한 및 추가
+
     const image = new Image();
     image.src = item.image;
     return {
@@ -109,9 +113,9 @@ function createSprites() {
     };
   });
 
-  itemController = new ItemController(ctx, itemImages, scaleRatio, GROUND_SPEED);
+  itemController = new ItemController(ctx, itemImages, scaleRatio, GROUND_SPEED, newGameAssets.itemUnlocks);
 
-  score = new Score(ctx, scaleRatio, gameData);
+  score = new Score(ctx, scaleRatio, newGameAssets.stages, newGameAssets.items, newGameAssets.itemUnlocks);
 }
 
 function getScaleRatio() {
@@ -143,16 +147,16 @@ if (screen.orientation) {
 function showGameOver() {
   const fontSize = 70 * scaleRatio;
   ctx.font = `${fontSize}px Verdana`;
-  ctx.fillStyle = 'grey';
+  ctx.fillStyle = 'red';
   const x = canvas.width / 4.5;
   const y = canvas.height / 2;
-  ctx.fillText('GAME OVER', x, y);
+  ctx.fillText('YOU DIED...', x, y);
 }
 
 function showStartGameText() {
   const fontSize = 40 * scaleRatio;
   ctx.font = `${fontSize}px Verdana`;
-  ctx.fillStyle = 'grey';
+  ctx.fillStyle = 'white';
   const x = canvas.width / 14;
   const y = canvas.height / 2;
   ctx.fillText('Tap Screen or Press Space To Start', x, y);
@@ -165,14 +169,17 @@ function updateGameSpeed(deltaTime) {
 function reset() {
   hasAddedEventListenersForRestart = false;
   gameover = false;
-  waitingToStart = false;
-
+  waitingToStart = false; 
   ground.reset();
   cactiController.reset();
   score.reset();
+  //score.setrecords();
   gameSpeed = GAME_SPEED_START;
   // 게임시작 핸들러ID 2, payload 에는 게임 시작 시간
+  gameLog.innerHTML = '게임 시작!!';
   sendEvent(2, { timestamp: Date.now()});
+  BGM.play();
+  
 }
 
 function setupGameReset() {
@@ -186,7 +193,7 @@ function setupGameReset() {
 }
 
 function clearScreen() {
-  ctx.fillStyle = 'white';
+  ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -221,8 +228,17 @@ function gameLoop(currentTime) {
   if (!gameover && cactiController.collideWith(player)) {
     gameover = true;
     score.setHighScore();
-    sendEvent(3, {});
+    sendEvent(3, {timestamp: Date.now(),score:score});
     setupGameReset();
+    
+    if(player.isPoision) {
+      player.isPoision = false;
+      player.reset();
+
+    }
+    gameLog.innerHTML = '<div style="color:red">당신은 죽었습니다..</div>';
+    BGM.pause();
+    Dead.play();
   }
   const collideWithItem = itemController.collideWith(player);
   if (collideWithItem && collideWithItem.itemId) {
@@ -230,10 +246,11 @@ function gameLoop(currentTime) {
   }
 
   // draw
-  player.draw();
-  cactiController.draw();
   ground.draw();
   score.draw();
+  
+  player.draw();
+  cactiController.draw();
   itemController.draw();
 
   if (gameover) {

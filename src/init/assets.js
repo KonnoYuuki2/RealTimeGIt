@@ -11,7 +11,7 @@ const basePath = path.join(__dirname,'../../assets'); // 현재 디렉토리에�
 
 // console.log(__filename);
 // console.log(__dirname);
- console.log(basePath);
+// console.log(basePath);
 
 // 파일 읽는 함수
 // 비동기 병렬로 파일을 읽는다. => 가장 늦게 처리되는 시간까지 기다렸다가 한번에 처리한다.
@@ -31,13 +31,15 @@ const readFileAsync = (filename) => {
 
  export const loadGameAsset = async () => {
     try{
-        const [stages, items, itemUnlocks] = await Promise.all([
+        const [stages, items, itemUnlocks, records, plants] = await Promise.all([
             readFileAsync('stage.json'),
             readFileAsync('item.json'),
             readFileAsync('item_unlock.json'),
+            readFileAsync('records.json'),
+            readFileAsync('plants.json'),
         ])
 
-        gameAssets = {stages, items, itemUnlocks};
+        gameAssets = {stages, items, itemUnlocks, records, plants};
         return gameAssets;
     }
     catch(err) {

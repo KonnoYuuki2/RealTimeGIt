@@ -1,0 +1,9 @@
+{
+    "name": "plants",
+    "version": "1.0.0",
+    "PLANTS_CONFIG": [
+        { "width": 50 , "height": 50 , "image": "images/darkPlants1.png" },
+        { "width": 90 , "height": 75 , "image": "images/darkPlants2.png" },
+        { "width": 75 , "height": 100 , "image": "images/darkPlants3.png" }
+    ]
+  }

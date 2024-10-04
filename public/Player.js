@@ -1,7 +1,9 @@
 class Player {
     WALK_ANIMATION_TIMER = 200;
     walkAnimationTimer = this.WALK_ANIMATION_TIMER;
+
     dinoRunImages = [];
+    charRunImages = [];
 
     //점프 상태값
     jumpPressed = false;
@@ -10,35 +12,70 @@ class Player {
 
     JUMP_SPEED = 0.6;
     GRAVITY = 0.4;
+    isPoision = null;
+    image = null;
 
+    save = null;
+    saveGravity = this.GRAVITY;
     // 생성자
     constructor(ctx, width, height, minJumpHeight, maxJumpHeight, scaleRatio) {
         this.ctx = ctx;
         this.canvas = ctx.canvas;
-        this.width = width;
-        this.height = height;
-        this.minJumpHeight = minJumpHeight;
-        this.maxJumpHeight = maxJumpHeight;
+        this.width = Math.floor(width);
+        this.height = Math.floor(height);
+        this.minJumpHeight = Math.floor(minJumpHeight);
+        this.maxJumpHeight = Math.floor(maxJumpHeight);
         this.scaleRatio = scaleRatio;
+        this.isPoision = false;
 
+        this.save = {width,height,minJumpHeight,maxJumpHeight};
         this.x = 10 * scaleRatio;
         this.y = this.canvas.height - this.height - 1.5 * scaleRatio;
         // 기본 위치 상수화
         this.yStandingPosition = this.y;
 
         this.standingStillImage = new Image();
-        this.standingStillImage.src = "images/standing_still.png";
+        this.standingStillImage.src = "images/characters/sample3.png";
         this.image = this.standingStillImage;
 
         // 달리기
-        const dinoRunImage1 = new Image();
-        dinoRunImage1.src = "images/dino_run1.png";
+        // const dinoRunImage1 = new Image();
+        // dinoRunImage1.src = "images/dino_run1.png";
 
-        const dinoRunImage2 = new Image();
-        dinoRunImage2.src = "images/dino_run2.png";
+        // const dinoRunImage2 = new Image();
+        // dinoRunImage2.src = "images/dino_run2.png";
+        
+        // this.dinoRunImages.push(dinoRunImage1);
+        // this.dinoRunImages.push(dinoRunImage2);
 
-        this.dinoRunImages.push(dinoRunImage1);
-        this.dinoRunImages.push(dinoRunImage2);
+        const charRunImage1 = new Image();
+        charRunImage1.src = "images/characters/sample1.png";
+
+        const charRunImage2 = new Image();
+        charRunImage2.src = "images/characters/sample2.png";
+
+        const charRunImage3 = new Image();
+        charRunImage3.src = "images/characters/sample3.png";
+
+        const charRunImage4 = new Image();
+        charRunImage4.src = "images/characters/sample4.png";
+
+        const charRunImage5 = new Image();
+        charRunImage5.src = "images/characters/sample5.png";
+
+        const charRunImage6 = new Image();
+        charRunImage6.src = "images/characters/sample6.png";
+
+        const charRunImage7 = new Image();
+        charRunImage7.src = "images/characters/sample7.png";
+
+        this.charRunImages.push(charRunImage1);
+        this.charRunImages.push(charRunImage2);
+        this.charRunImages.push(charRunImage3);
+        this.charRunImages.push(charRunImage4);
+        this.charRunImages.push(charRunImage5);
+        this.charRunImages.push(charRunImage6);
+        this.charRunImages.push(charRunImage7);
 
         // 키보드 설정
         // 등록된 이벤트가 있는 경우 삭제하고 다시 등록
@@ -47,8 +84,6 @@ class Player {
 
         window.addEventListener("keydown", this.keydown);
         window.addEventListener("keyup", this.keyup);
-
-        window.addEventListener("keypress", this.keysamp);
     }
 
     keydown = (event) => {
@@ -63,12 +98,6 @@ class Player {
             this.jumpPressed = false;
         }
     };
-
-    keysamp = (event) => {
-        if(event.code === "KeyZ") {
-            console.log("attack");
-        }
-    }
 
     update(gameSpeed, deltaTime) {
         this.run(gameSpeed, deltaTime);
@@ -112,20 +141,44 @@ class Player {
     }
 
     run(gameSpeed, deltaTime) {
-        if (this.walkAnimationTimer <= 0) {
-            if (this.image === this.dinoRunImages[0]) {
-                this.image = this.dinoRunImages[1];
-            } else {
-                this.image = this.dinoRunImages[0];
-            }
-            this.walkAnimationTimer = this.WALK_ANIMATION_TIMER;
-        }
+        // walkTimer 가 0보다 작아질 때마다 현재 실행되는 이미지를 가져와서 다음 이미지를 출력한다.
+        // 이미지는 총 7개가 있고 해당 이미지의 번수가 7보다 커질 경우에는 %7로 돌아온다.
 
-        this.walkAnimationTimer -= deltaTime * gameSpeed;
+        if (this.walkAnimationTimer >= 0  && Math.floor(this.walkAnimationTimer) % 4 === 0) {
+           // console.log(`charRunImages`, this.charRunImages);
+           //console.log(this.walkAnimationTimer);
+            const saveRunImageIndex = this.charRunImages.indexOf(this.image);
+            // console.log(`saveRunImageIndex: `, saveRunImageIndex);
+            // console.log(`this.image: `, this.image);
+            this.image = this.charRunImages[(saveRunImageIndex + 1) % 7];     
+
+                
+        }
+        // if (this.walkAnimationTimer <= 0) {
+        //     if (this.image === this.dinoRunImages[0]) {
+                
+        //         console.log(`this 이미지 입니다.`, this.image);
+        //         this.image = this.dinoRunImages[1];
+        //         console.log(`this 인덱스`, this.dinoRunImages.indexOf(this.image)); // 1
+        //     } else {
+        //         this.image = this.dinoRunImages[0];
+        //     }
+        //     this.walkAnimationTimer = this.WALK_ANIMATION_TIMER;
+        // }
+
+        this.walkAnimationTimer += deltaTime * gameSpeed;
     }
 
     draw() {
         this.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+    }
+
+    reset() {
+        this.width = this.save.width;
+        this.height = this.save.height;
+        this.minJumpHeight = this.save.minJumpHeight;
+        this.maxJumpHeight = this.save.maxJumpHeight;
+        this.GRAVITY = this.saveGravity;
     }
 }
 

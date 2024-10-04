@@ -1,20 +1,23 @@
 import Item from "./Item.js";
+import { currentStage } from "./socket.js";
 
 class ItemController {
 
     INTERVAL_MIN = 0;
-    INTERVAL_MAX = 12000;
+    INTERVAL_MAX = 1500;
 
     nextInterval = null;
     items = [];
+    itemUnlocks = {};
 
 
-    constructor(ctx, itemImages, scaleRatio, speed) {
+    constructor(ctx, itemImages, scaleRatio, speed, itemUnlocks) {
         this.ctx = ctx;
         this.canvas = ctx.canvas;
         this.itemImages = itemImages;
         this.scaleRatio = scaleRatio;
         this.speed = speed;
+        this.itemUnlocks = itemUnlocks;
 
         this.setNextItemTime();
     }
@@ -30,11 +33,19 @@ class ItemController {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
-    createItem() {
-        // 어떤 스테이지에서 어떤 아이템을 넣을 것인지
+    async createItem() {
+        //console.log(currentStage);
+       //{ "id":  101, "stage_id": 1000, "item_id": 1 }
+       let unlockItem = await this.itemUnlocks.data.filter((element) => {
+        //console.log(element);
+          return element.stage_id <= currentStage;
+       })
+       //console.log(unlockItem);
+              
+        const index = this.getRandomNumber(0, unlockItem.length - 1);
 
-        const index = this.getRandomNumber(0, this.itemImages.length - 1);
-        const itemInfo = this.itemImages[index];
+        const itemInfo = this.itemImages[index]; // 아이템의 정보들을 다 가지고 있는 배열
+        
         const x = this.canvas.width * 1.5;
         const y = this.getRandomNumber(
             10,
