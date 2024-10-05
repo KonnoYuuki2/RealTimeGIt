@@ -4,10 +4,11 @@ import { getUser, removeUser } from "../models/user.model.js";
 import handlerMapping from "./handlerMapping.js";
 import { redisCli } from "../init/redis.js";
 
-export const handleDisconnect = (socket, uuid) => {
+export const handleDisconnect = async (socket, uuid) => {
+
     console.log(`User disconnected ${socket.id}`);
-    removeUser(socket.id);
-    console.log(`Current users:`, getUser());
+    await removeUser({uuid: uuid,socketId:socket.id});
+    console.log(`Current users:`, await getUser());
 }
 
 // 스테이지에 따라서 더 높은 점수 획득
@@ -20,11 +21,11 @@ export const handleConnection = async (socket, uuid) => {
       return value
     }));
 
-    if(uuid === redisData.userId) {
+    if(redisData && uuid === redisData.userId) {
       socket.emit(`response`, {ranker: `환영합니다 랭커 ${uuid}님`});
     }
     console.log(`New user connected: ${uuid} with socket ID ${socket.id}`);
-    console.log(`Current users: `, getUser());
+    console.log(`Current users: `, await getUser());
     
     createStage(uuid);
 

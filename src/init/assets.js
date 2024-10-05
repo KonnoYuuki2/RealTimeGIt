@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import {fileURLToPath} from 'url';
+import { redisCli } from './redis.js';
 
 let gameAssets = {};
 
@@ -39,6 +40,7 @@ const readFileAsync = (filename) => {
             readFileAsync('plants.json'),
         ])
 
+        //redisCli.SADD('stages', stages)
         gameAssets = {stages, items, itemUnlocks, records, plants};
         return gameAssets;
     }

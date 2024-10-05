@@ -14,7 +14,7 @@ const registerHandler = (io) => {
     socket.on('event', (data) => handlerEvent(io,socket,data)); //evnet 가 들어왔을때 처리
 
     // 접속 해제시 이벤트
-    socket.on('disconnect', (socket) => handleDisconnect(socket, userUUID)) // 하나의 유저를 대상으로 한 이벤트
+    socket.on('disconnect', async (socket) => await handleDisconnect(socket, userUUID)) // 하나의 유저를 대상으로 한 이벤트
     
  })
   

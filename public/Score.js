@@ -53,16 +53,13 @@ class Score {
 
     //현재 스테이지에서 얻을 수 있는 아이템들을 불러와야만 한다.
     // 그리고 가져온 아이템 아이디가 현재 스테이지에서 얻을 수 있는 아이템 배열에 있는지 확인
-
-    if(!this.itemUnlocks.data.some((item) => { return item.stage_id <= currentStage })) {
-       console.log('아이템 오류 발생!');
-      // 아이템 오류가 발생시 핵 유저임을 인지하였으므로
-        // 해당 유저가 최대기록을 달성시 레코드에 기록되지 못하게끔 하기 위하여 
-    }
-
     const item = this.items.ITEM_CONFIG.find((item) => {
       return item.id === itemId
     });
+
+    if(item.type === "score") {
+      gameLog.innerHTML = `<div style="color:gold">+${item.score}</div>`;
+    }
 
     if(item.type === "poision" && !player.isPoision) {
       player.maxJumpHeight -= 50;

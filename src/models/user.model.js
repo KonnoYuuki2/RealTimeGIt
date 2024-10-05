@@ -1,16 +1,30 @@
-const users = [];
+import { redisCli } from "../init/redis.js";
 
-export const addUser = (user) => { // 유저 추가
+const users = [];
+const user_set = 'user';
+
+export const addUser = async (user) => { // 유저 추가
     users.push(user);
+
+    try{
+        const sample = await redisCli.SADD(user_set, user.uuid);
+    }catch(err) {
+       console.log(err);
+    }
+    
 }
 
-export const removeUser = (socketId) => {
-    const index = users.findIndex((user) => user.socketId = socketId);
-
-    if(index !== -1) {
-        return users.splice(index,1)[0];
+export const removeUser = async (user) => {
+    try {
+      const save = await redisCli.SREM(user_set, user.uuid);
+      //console.log(await redisCli.SMEMBERS(user_set));
+    }
+    catch(err) {
+       console.log(err);
     }
 } 
 export const getUser = () => { // 유저 조회
-   return users;
+    //const getRedis = await redisCli.SMEMBER('user','userId');
+    const userList = redisCli.SMEMBERS(user_set);
+   return userList;
 }
