@@ -55,6 +55,7 @@ export const handlerEvent = async (io, socket, data) => {
   const response = await handler(data.userId, data.payload); // 스테이지
 
   if (response.broadCast) {
+    console.log(`왜 작동이 되지?`);
     // 브로드 캐스트 할 메시지 인가?
     await io.emit("response", {
       status: "broadCast",
