@@ -48,6 +48,5 @@ export const gameEnd = (uuid, payload) => {
   }
 
   // DB에 저장시 이곳에서 저장
-  // setResult(userId, score, timestamp);
   return { status: "success", message: "Game Ended", score: score };
 };

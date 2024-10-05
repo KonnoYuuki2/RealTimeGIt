@@ -37,7 +37,6 @@ class Score {
     // 점수가 100점 이상이 될 시 서버에 메세지 전송
     // 델타 타임으로 구하고 있기 때문에 소수점으로 구하게 되서 이를 100.000001 이 나올 수도 있다.
 
-    //console.log(stages.data[+stageKey + 1].id);
     // 다음 스테이지가 마지막 스테이지 였을 경우에 더이상 스테이지 변경 불가
     if (newStage.id === this.stages.data[this.stages.data.length - 1].id) {
       this.stageChange = false;
@@ -74,7 +73,6 @@ class Score {
     if (item.type === "poision" && !player.isPoision) {
       player.maxJumpHeight -= 50;
       player.isPoision = true;
-      //console.log(`독에 걸렸습니다!`);
       gameLog.innerHTML =
         '<div style="color:green">독병을 마셨습니다! 점프력 -50</div>';
 
@@ -82,10 +80,10 @@ class Score {
         if (player.isPoision) {
           player.maxJumpHeight += 30;
           player.isPoision = false;
-          //console.log(`독이 풀렸습니다!`);
           gameLog.innerHTML = '<div style="color:blue">독이 풀렸습니다!</div>';
         } else {
-          console.log(`이미 독이 풀린 상태입니다.`);
+          gameLog.innerHTML =
+            '<div style="color:blue">이미 독이 풀려 있습니다!</div>';
         }
       }, 5000);
     }
@@ -93,7 +91,6 @@ class Score {
     if (item.type === "poisionFruit" && !player.isPoision) {
       player.GRAVITY *= 2;
       player.isPoision = true;
-      //console.log(`독에 걸렸습니다!`);
       gameLog.innerHTML =
         '<div style="color:green">독사과를 먹었습니다! 중력 2배</div>';
 
@@ -101,7 +98,6 @@ class Score {
         if (player.isPoision) {
           player.GRAVITY /= 2;
           player.isPoision = false;
-          //console.log(`독이 풀렸습니다!`);
           gameLog.innerHTML = '<div style="color:blue">독이 풀렸습니다!</div>';
         } else {
           console.log(`이미 독이 풀린 상태입니다.`);
@@ -121,9 +117,6 @@ class Score {
   }
 
   setHighScore() {
-    //const highScore = Number(localStorage.getItem(this.HIGH_SCORE_KEY));
-    //console.log(HighScore);
-
     if (this.score > newGameAssets.records.HighScore) {
       sendEvent(12, { timestamp: Date.now(), score: this.score });
     }
@@ -134,7 +127,6 @@ class Score {
   }
 
   draw() {
-    //const highScore = Number(localStorage.getItem(this.HIGH_SCORE_KEY));
     const y = 20 * this.scaleRatio;
 
     const fontSize = 20 * this.scaleRatio;

@@ -34,7 +34,6 @@ export const moveStageHandler = (userId, payload) => {
 
   const stageKey = payload.stageKey;
   const nowStageScore = stages.data[+stageKey + 1].score;
-  //console.log(`서버:` , stageKey);
   // 1 스테이지에서 2 스테이지로 넘어가는 과정
   // 5 => 임의로 정한 오차범위
   if (elapsedTime === nowStageScore && elapsedTime > nowStageScore + 5) {

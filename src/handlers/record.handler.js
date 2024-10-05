@@ -29,12 +29,6 @@ export const recordHandler = async (uuid, payload) => {
     })
   );
 
-  console.log(`저장한 레디스:`, saveRedis);
-
-  // fs.writeFileSync(basePath, JSON.stringify(saveRecords));
-  // const saveScoreFile = JSON.parse(fs.readFileSync(basePath));
-  //console.log(`saveScoreFile: `, saveScoreFile);
-  // 하이스코어를 로컬 스토리지를 쓰지 않고 쓰는 알고리즘
   let { HighScore } = saveRedis;
   const returnScore = HighScore;
 

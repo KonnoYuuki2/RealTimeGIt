@@ -61,7 +61,6 @@ export const handlerEvent = async (io, socket, data) => {
       broadCast: `${response.broadCast}`,
       records: response.records,
     });
-    //console.log(`브로드 캐스트 됨`);
     return;
   }
 

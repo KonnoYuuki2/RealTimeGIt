@@ -209,7 +209,6 @@ function reset() {
   cactiController.reset();
   score.reset();
   itemController.reset(); // 아이템 리셋 추가
-  //score.setrecords();
   gameSpeed = GAME_SPEED_START;
   // 게임시작 핸들러ID 2, payload 에는 게임 시작 시간
   gameLog.innerHTML = "<div>게임 시작!!</div>"; // 게임 시작 문구 출력

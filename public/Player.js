@@ -39,16 +39,6 @@ class Player {
     this.standingStillImage.src = "images/characters/sample3.png";
     this.image = this.standingStillImage;
 
-    // 달리기
-    // const dinoRunImage1 = new Image();
-    // dinoRunImage1.src = "images/dino_run1.png";
-
-    // const dinoRunImage2 = new Image();
-    // dinoRunImage2.src = "images/dino_run2.png";
-
-    // this.dinoRunImages.push(dinoRunImage1);
-    // this.dinoRunImages.push(dinoRunImage2);
-
     // 캐릭터 이미지들 불러오기
     const charRunImage1 = new Image();
     charRunImage1.src = "images/characters/sample1.png";
@@ -147,30 +137,14 @@ class Player {
   run(gameSpeed, deltaTime) {
     // walkTimer 가 0보다 작아질 때마다 현재 실행되는 이미지를 가져와서 다음 이미지를 출력한다.
     // 이미지는 총 7개가 있고 해당 이미지의 번수가 7보다 커질 경우에는 %7로 돌아온다.
-
-    console.log(this.JumpCoolTime);
     if (
       this.walkAnimationTimer >= 0 &&
       Math.floor(this.walkAnimationTimer) % 4 === 0
     ) {
-      // console.log(`charRunImages`, this.charRunImages);
-      //console.log(this.walkAnimationTimer);
       const saveRunImageIndex = this.charRunImages.indexOf(this.image);
-      // console.log(`saveRunImageIndex: `, saveRunImageIndex);
-      // console.log(`this.image: `, this.image);
+
       this.image = this.charRunImages[(saveRunImageIndex + 1) % 7];
     }
-    // if (this.walkAnimationTimer <= 0) {
-    //     if (this.image === this.dinoRunImages[0]) {
-
-    //         console.log(`this 이미지 입니다.`, this.image);
-    //         this.image = this.dinoRunImages[1];
-    //         console.log(`this 인덱스`, this.dinoRunImages.indexOf(this.image)); // 1
-    //     } else {
-    //         this.image = this.dinoRunImages[0];
-    //     }
-    //     this.walkAnimationTimer = this.WALK_ANIMATION_TIMER;
-    // }
 
     this.walkAnimationTimer += deltaTime * gameSpeed;
   }

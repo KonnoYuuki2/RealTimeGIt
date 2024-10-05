@@ -25,15 +25,13 @@ socket.on("response", (response) => {
 
   if (response.broadCast) {
     // 브로드 캐스트 처리
-    //gameLog.after(response.broadCast);
     console.log(response.broadCast);
   }
 
   if (response.records) {
     // 최대 기록 달성시 갱신
-    //console.log(`response.records`, response.records);
     newGameAssets.update(response.records);
-    //return 시 제대로 작동하지 않는다는 점
+    //return 시 다음이 제대로 작동하지 않는다는 점
   }
 
   if (response.ranker) {
