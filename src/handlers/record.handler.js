@@ -12,6 +12,13 @@ import { redisCli } from "../init/redis.js";
 export const recordHandler = async (uuid, payload) => {
   // 기존의 레코드를 두면서 새롭게 랭킹을 갱신한 사람들을 추가하기
   const { timestamp: gameEndTime, score } = payload;
+
+  if (!redisCli.SISMEMBER("user", uuid)) {
+    return {
+      status: "fail",
+      errorMessage: "부정 유저입니다. 랭킹에 등록할 수 없습니다!",
+    };
+  }
   // 저장할 레코드
   const saveRecords = {
     userId: uuid,

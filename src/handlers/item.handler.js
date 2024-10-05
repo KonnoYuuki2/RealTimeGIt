@@ -17,7 +17,7 @@ export function itemHandler(userId, payload) {
 
     return {
       status: "fail",
-      errorItemsMessage: "버그 유저 확인, 연결을 강제 종료합니다.",
+      errorMessage: "버그 유저 확인, 연결을 강제 종료합니다.",
     };
   }
 

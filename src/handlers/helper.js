@@ -25,8 +25,9 @@ export const handleConnection = async (socket, uuid) => {
   if (redisData && uuid === redisData.userId) {
     socket.emit(`response`, { ranker: `환영합니다 랭커 ${uuid}님` });
   }
+  const currentUsers = await getUser();
   console.log(`New user connected: ${uuid} with socket ID ${socket.id}`);
-  console.log(`Current users: `, await getUser());
+  console.log(`Current users: `, currentUsers);
 
   createStage(uuid);
 

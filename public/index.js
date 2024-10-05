@@ -7,6 +7,7 @@ import "./socket.js";
 import { sendEvent } from "./socket.js";
 import gameAssets from "./gameAssets.js";
 
+//43.203.214.111
 //해당 URL로 요청한 데이터를 받아서 처리
 const gameDataRequest = await fetch("http://43.203.214.111:3000/getGameAssets");
 const gameData = await gameDataRequest.json();

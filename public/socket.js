@@ -40,9 +40,9 @@ socket.on("response", (response) => {
     console.log(response.ranker);
   }
 
-  if (response.errorItemsMessage) {
+  if (response.errorMessage) {
     // 아이템 오류 작동시 문구 출력
-    gameLog.innerHTML = `<H3 style= "color:red'>${response.errorItemsMessage}</H3>`;
+    gameLog.innerHTML = `<H3 style= "color:red'>${response.errorMessage}</H3>`;
     return;
   }
 
