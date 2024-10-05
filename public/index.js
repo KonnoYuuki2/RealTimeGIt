@@ -1,28 +1,33 @@
-import Player from './Player.js';
-import Ground from './Ground.js';
-import CactiController from './CactiController.js';
-import Score from './Score.js';
-import ItemController from './ItemController.js';
-import './socket.js';
-import { sendEvent } from './socket.js';
-import gameAssets from './gameAssets.js';
+import Player from "./Player.js";
+import Ground from "./Ground.js";
+import CactiController from "./CactiController.js";
+import Score from "./Score.js";
+import ItemController from "./ItemController.js";
+import "./socket.js";
+import { sendEvent } from "./socket.js";
+import gameAssets from "./gameAssets.js";
 
 //http://43.203.214.111:3000/getGameAssets
 //http://43.203.214.111:3000/getRedisData
 //해당 URL로 요청한 데이터를 받아서 처리
-const gameDataRequest = await fetch('http://43.203.214.111:3000/getGameAssets'); 
-const gameData = await gameDataRequest.json(); 
+const gameDataRequest = await fetch("http://localhost:3000/getGameAssets");
+const gameData = await gameDataRequest.json();
 
-const redisDataRequest = await fetch('http://43.203.214.111:3000/getRedisData'); 
-const redisData = await redisDataRequest.json(); 
+const redisDataRequest = await fetch("http://localhost:3000/getRedisData");
+const redisData = await redisDataRequest.json();
 
 const { stages, items, itemUnlocks, records, plants } = gameData;
-export const newGameAssets = new gameAssets(stages, items, itemUnlocks, redisData);
+export const newGameAssets = new gameAssets(
+  stages,
+  items,
+  itemUnlocks,
+  redisData
+);
 
-const canvas = document.getElementById('game');
-const ctx = canvas.getContext('2d');
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
-export const gameLog = document.getElementById('gameLog');
+export const gameLog = document.getElementById("gameLog");
 
 const GAME_SPEED_START = 1;
 const GAME_SPEED_INCREMENT = 0.00001;
@@ -63,9 +68,10 @@ let gameover = false;
 let hasAddedEventListenersForRestart = false;
 let waitingToStart = true;
 
-const BGM = new Audio('./audios/BGM2.mp3');
+// 오디오 기능 추가
+const BGM = new Audio("./audios/BGM2.mp3");
 BGM.loop = true;
-const Dead = new Audio('./audios/girl_cry.mp3');
+const Dead = new Audio("./audios/girl_cry.mp3");
 
 function createSprites() {
   // 비율에 맞는 크기
@@ -85,10 +91,16 @@ function createSprites() {
     playerHeightInGame,
     minJumpHeightInGame,
     maxJumpHeightInGame,
-    scaleRatio,
+    scaleRatio
   );
 
-  ground = new Ground(ctx, groundWidthInGame, groundHeightInGame, GROUND_SPEED, scaleRatio);
+  ground = new Ground(
+    ctx,
+    groundWidthInGame,
+    groundHeightInGame,
+    GROUND_SPEED,
+    scaleRatio
+  );
 
   const cactiImages = PLANTS_CONFIG.map((cactus) => {
     const image = new Image();
@@ -100,7 +112,12 @@ function createSprites() {
     };
   });
 
-  cactiController = new CactiController(ctx, cactiImages, scaleRatio, GROUND_SPEED);
+  cactiController = new CactiController(
+    ctx,
+    cactiImages,
+    scaleRatio,
+    GROUND_SPEED
+  );
 
   const itemImages = ITEM_CONFIG.map((item) => {
     // 아이템 제한 및 추가
@@ -115,14 +132,32 @@ function createSprites() {
     };
   });
 
-  itemController = new ItemController(ctx, itemImages, scaleRatio, GROUND_SPEED, newGameAssets.itemUnlocks);
+  itemController = new ItemController(
+    ctx,
+    itemImages,
+    scaleRatio,
+    GROUND_SPEED,
+    newGameAssets.itemUnlocks
+  );
 
-  score = new Score(ctx, scaleRatio, newGameAssets.stages, newGameAssets.items, newGameAssets.itemUnlocks);
+  score = new Score(
+    ctx,
+    scaleRatio,
+    newGameAssets.stages,
+    newGameAssets.items,
+    newGameAssets.itemUnlocks
+  );
 }
 
 function getScaleRatio() {
-  const screenHeight = Math.min(window.innerHeight, document.documentElement.clientHeight);
-  const screenWidth = Math.min(window.innerHeight, document.documentElement.clientWidth);
+  const screenHeight = Math.min(
+    window.innerHeight,
+    document.documentElement.clientHeight
+  );
+  const screenWidth = Math.min(
+    window.innerHeight,
+    document.documentElement.clientWidth
+  );
 
   // window is wider than the game width
   if (screenWidth / screenHeight < GAME_WIDTH / GAME_HEIGHT) {
@@ -140,28 +175,28 @@ function setScreen() {
 }
 
 setScreen();
-window.addEventListener('resize', setScreen);
+window.addEventListener("resize", setScreen);
 
 if (screen.orientation) {
-  screen.orientation.addEventListener('change', setScreen);
+  screen.orientation.addEventListener("change", setScreen);
 }
 
 function showGameOver() {
   const fontSize = 70 * scaleRatio;
   ctx.font = `${fontSize}px Verdana`;
-  ctx.fillStyle = 'red';
+  ctx.fillStyle = "red";
   const x = canvas.width / 4.5;
   const y = canvas.height / 2;
-  ctx.fillText('YOU DIED...', x, y);
+  ctx.fillText("YOU DIED...", x, y);
 }
 
 function showStartGameText() {
   const fontSize = 40 * scaleRatio;
   ctx.font = `${fontSize}px Verdana`;
-  ctx.fillStyle = 'white';
+  ctx.fillStyle = "white";
   const x = canvas.width / 14;
   const y = canvas.height / 2;
-  ctx.fillText('Tap Screen or Press Space To Start', x, y);
+  ctx.fillText("Tap Screen or Press Space To Start", x, y);
 }
 
 function updateGameSpeed(deltaTime) {
@@ -171,18 +206,17 @@ function updateGameSpeed(deltaTime) {
 function reset() {
   hasAddedEventListenersForRestart = false;
   gameover = false;
-  waitingToStart = false; 
+  waitingToStart = false;
   ground.reset();
   cactiController.reset();
   score.reset();
-  itemController.reset();
+  itemController.reset(); // 아이템 리셋 추가
   //score.setrecords();
   gameSpeed = GAME_SPEED_START;
   // 게임시작 핸들러ID 2, payload 에는 게임 시작 시간
-  gameLog.innerHTML = '<div>게임 시작!!</div>';
-  sendEvent(2, { timestamp: Date.now()});
-  BGM.play();
-  
+  gameLog.innerHTML = "<div>게임 시작!!</div>"; // 게임 시작 문구 출력
+  sendEvent(2, { timestamp: Date.now() });
+  BGM.play(); // 브금 실행
 }
 
 function setupGameReset() {
@@ -190,13 +224,13 @@ function setupGameReset() {
     hasAddedEventListenersForRestart = true;
 
     setTimeout(() => {
-      window.addEventListener('keyup', reset, { once: true });
+      window.addEventListener("keyup", reset, { once: true });
     }, 1000);
   }
 }
 
 function clearScreen() {
-  ctx.fillStyle = 'black';
+  ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -231,17 +265,17 @@ function gameLoop(currentTime) {
   if (!gameover && cactiController.collideWith(player)) {
     gameover = true;
     score.setHighScore();
-    sendEvent(3, {timestamp: Date.now(),score:score});
+    sendEvent(3, { timestamp: Date.now(), score: score });
     setupGameReset();
-    
-    if(player.isPoision) {
+
+    // 죽을 때 독이 걸려있었을 경우 독을 해제하고 플레이어 정보를 리셋
+    if (player.isPoision) {
       player.isPoision = false;
       player.reset();
-
     }
     gameLog.innerHTML = '<div style="color:red">당신은 죽었습니다..</div>';
-    BGM.pause();
-    Dead.play();
+    BGM.pause(); // 브금 정지
+    Dead.play(); // 죽는 소리 실행
   }
   const collideWithItem = itemController.collideWith(player);
   if (collideWithItem && collideWithItem.itemId) {
@@ -251,7 +285,7 @@ function gameLoop(currentTime) {
   // draw
   ground.draw();
   score.draw();
-  
+
   player.draw();
   cactiController.draw();
   itemController.draw();
@@ -271,4 +305,4 @@ function gameLoop(currentTime) {
 // 게임 프레임을 다시 그리는 메서드
 requestAnimationFrame(gameLoop);
 
-window.addEventListener('keyup', reset, { once: true });
+window.addEventListener("keyup", reset, { once: true });
