@@ -7,7 +7,7 @@ export const addUser = async (user) => { // 유저 추가
     users.push(user);
 
     try{
-        const sample = await redisCli.SADD(user_set, user.uuid);
+        await redisCli.SADD(user_set, user.uuid);
     }catch(err) {
        console.log(err);
     }
@@ -16,7 +16,7 @@ export const addUser = async (user) => { // 유저 추가
 
 export const removeUser = async (user) => {
     try {
-      const save = await redisCli.SREM(user_set, user.uuid);
+      await redisCli.SREM(user_set, user.uuid);
       //console.log(await redisCli.SMEMBERS(user_set));
     }
     catch(err) {
