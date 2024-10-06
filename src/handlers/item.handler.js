@@ -10,7 +10,6 @@ export function itemHandler(userId, payload) {
     return item.item_id === payload.itemId;
   });
 
-  console.log(`현재 얻을 수 있는 아이템이에요`, canGetItem);
   if (payload.currentStage < canGetItem.stage_id) {
     redisCli.SREM(user_set, userId); // 유저 정보 삭제
     console.log(
