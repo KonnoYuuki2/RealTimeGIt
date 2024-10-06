@@ -20,7 +20,7 @@ export const newGameAssets = new gameAssets(
   stages,
   items,
   itemUnlocks,
-  redisData
+  redisData ? redisData : records // 만약 레디스 데이터가 날라갈 경우를 대비하기 위함
 );
 
 const canvas = document.getElementById("game");

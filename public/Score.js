@@ -109,7 +109,7 @@ class Score {
 
     this.score += item.score;
 
-    sendEvent(13, { currentStage: currentStage });
+    sendEvent(13, { currentStage: currentStage, itemId: itemId });
   }
 
   reset() {
