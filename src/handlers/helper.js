@@ -5,7 +5,7 @@ import handlerMapping from "./handlerMapping.js";
 import { redisCli } from "../init/redis.js";
 
 export const handleDisconnect = async (socket, uuid) => {
-  console.log(`User disconnected ${socket.id}`);
+  console.log(`User disconnected ${uuid}`);
   await removeUser({ uuid: uuid, socketId: socket.id });
   console.log(`Current users:`, await getUser());
 };
@@ -56,7 +56,6 @@ export const handlerEvent = async (io, socket, data) => {
   const response = await handler(data.userId, data.payload); // 스테이지
 
   if (response.broadCast) {
-    console.log(`왜 작동이 되지?`);
     // 브로드 캐스트 할 메시지 인가?
     await io.emit("response", {
       status: "broadCast",

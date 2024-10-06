@@ -1,7 +1,7 @@
 import { CLIENT_VERSION } from "./constants.js";
 import { gameLog, newGameAssets } from "./index.js";
 
-const socket = io("http://43.203.214.111:3000", {
+const socket = io("http://localhost:3000", {
   // 이 주소로 연결하겠다.
   query: {
     clientVersion: CLIENT_VERSION, //서버가 시작될떄 연결이 될떄

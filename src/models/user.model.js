@@ -8,7 +8,7 @@ export const addUser = async (user) => {
   users.push(user);
 
   try {
-    await redisCli.SADD(user_set, user.uuid);
+    await redisCli.SADD(user_set, user.uuid, "EX", 60 * 60 * 24);
   } catch (err) {
     console.log(err);
   }
