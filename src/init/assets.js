@@ -28,11 +28,17 @@ const readFileAsync = (filename) => {
 export const loadGameAsset = async () => {
   try {
     const [stages, items, itemUnlocks, records, plants] = await Promise.all([
-      readFileAsync("stage.json"),
-      readFileAsync("item.json"),
-      readFileAsync("item_unlock.json"),
-      readFileAsync("records.json"),
-      readFileAsync("plants.json"),
+      await JSON.parse(await redisCli.SMEMBERS("stages")),
+      await JSON.parse(await redisCli.SMEMBERS("items")),
+      await JSON.parse(await redisCli.SMEMBERS("itemUnlock")),
+      await JSON.parse(await redisCli.SMEMBERS("records")),
+      await JSON.parse(await redisCli.SMEMBERS("plants")),
+
+      // readFileAsync("stage.json"),
+      // readFileAsync("item.json"),
+      // readFileAsync("item_unlock.json"),
+      // readFileAsync("records.json"),
+      // readFileAsync("plants.json"),
     ]);
 
     gameAssets = { stages, items, itemUnlocks, records, plants };

@@ -1,5 +1,5 @@
 import { CLIENT_VERSION } from "./constants.js";
-import { gameLog, newGameAssets } from "./index.js";
+import { newGameAssets } from "./index.js";
 
 const socket = io("http://43.203.214.111:3000", {
   // 이 주소로 연결하겠다.
