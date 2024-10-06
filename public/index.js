@@ -9,10 +9,10 @@ import gameAssets from "./gameAssets.js";
 
 //43.203.214.111
 //해당 URL로 요청한 데이터를 받아서 처리
-const gameDataRequest = await fetch("http://localhost:3000/getGameAssets");
+const gameDataRequest = await fetch("http://43.203.214.111:3000/getGameAssets");
 const gameData = await gameDataRequest.json();
 
-const redisDataRequest = await fetch("http://localhost:3000/getRedisData");
+const redisDataRequest = await fetch("http://43.203.214.111:3000/getRedisData");
 const redisData = await redisDataRequest.json();
 
 const { stages, items, itemUnlocks, records, plants } = gameData;
